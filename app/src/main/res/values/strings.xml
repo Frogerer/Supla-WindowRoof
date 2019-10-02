@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SuplaRoofWindow</string>
+    <string name="szerokosc">Szerokosc</string>
+    <string name="wysokosc">Wysokosc</string>
+</resources>
