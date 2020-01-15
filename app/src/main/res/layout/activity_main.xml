@@ -6,12 +6,117 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView40"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/seekBar1"
-        android:layout_marginBottom="-35dp"
-        android:text="@string/wysokosc" />
+        android:layout_marginBottom="-108dp"
+        android:text="@string/rotacja_y" />
+
+    <SeekBar
+        android:id="@+id/seekBar4"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/cView"
+        android:layout_alignLeft="@+id/cView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="87dp"
+        android:layout_marginLeft="87dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/background_light"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/seekBar2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="283dp"
+        android:layout_marginLeft="283dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/textview2"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/seekBar2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="282dp"
+        android:layout_marginLeft="282dp"
+        android:layout_marginTop="39dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginRight="11dp"
+        android:text="@string/textview2"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/seekBar2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="282dp"
+        android:layout_marginLeft="282dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
+        android:text="@string/textview2"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/seekBar2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="282dp"
+        android:layout_marginLeft="282dp"
+        android:layout_marginTop="-38dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
+        android:text="@string/textview1"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/seekBar1"
+        android:layout_marginBottom="-1dp"
+        android:text="@string/szerokosc" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/seekBar1"
+        android:layout_marginBottom="-37dp"
+        android:text="@string/punkt_360" />
+
+    <TextView
+        android:id="@+id/textView30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/seekBar1"
+        android:layout_marginBottom="-75dp"
+        android:text="@string/rotacja_360" />
 
     <com.example.suplaroofwindow.SuplaWindowRoof
         android:id="@+id/cView"
@@ -25,27 +130,41 @@
 
     <SeekBar
         android:id="@+id/seekBar1"
-        android:layout_width="297dp"
+        android:layout_width="192dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="86dp"
-        android:layout_marginLeft="86dp"
-        android:layout_marginEnd="26dp"
-        android:layout_marginRight="26dp"
-        android:layout_marginBottom="111dp"
+        android:layout_marginStart="85dp"
+        android:layout_marginLeft="85dp"
+        android:layout_marginBottom="126dp"
         android:background="@android:color/background_light"
         android:max="1000" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+    <SeekBar
+        android:id="@+id/seekBar2"
+        android:layout_width="191dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/seekBar1"
-        android:layout_marginBottom="-1dp"
-        android:text="@string/szerokosc" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="86dp"
+        android:layout_marginLeft="86dp"
+        android:layout_marginBottom="89dp"
+        android:background="@android:color/background_light"
+        android:max="360" />
+
+    <SeekBar
+        android:id="@+id/seekBar3"
+        android:layout_width="193dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="85dp"
+        android:layout_marginLeft="85dp"
+        android:layout_marginBottom="49dp"
+        android:background="@android:color/background_light"
+        android:max="360" />
 
 </RelativeLayout>

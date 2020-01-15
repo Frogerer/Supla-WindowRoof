@@ -2,4 +2,15 @@
     <string name="app_name">SuplaRoofWindow</string>
     <string name="szerokosc">Szerokosc</string>
     <string name="wysokosc">Wysokosc</string>
+    <string name="wychylenie">Wychylenie</string>
+    <string name="textview1">TextView</string>
+    <string name="textview2">TextView</string>
+    <string name="textview3">TextView</string>
+    <string name="rotacja_y">Rotacja Y</string>
+    <string name="roracja_x">Roracja X</string>
+    <string name="punkt">Punkt</string>
+    <string name="rotacja_x">rotacja x</string>
+    <string name="rotacja_X">rotacja X</string>
+    <string name="punkt_360">punkt 360</string>
+    <string name="rotacja_360">Rotacja 360</string>
 </resources>
