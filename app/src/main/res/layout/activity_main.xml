@@ -108,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/seekBar1"
         android:layout_marginBottom="-37dp"
-        android:text="@string/punkt_360" />
+        android:text="@string/procent" />
 
     <TextView
         android:id="@+id/textView30"
@@ -121,11 +121,11 @@
     <com.example.suplaroofwindow.SuplaWindowRoof
         android:id="@+id/cView"
         android:layout_width="match_parent"
-        android:layout_height="518dp"
+        android:layout_height="446dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="53dp"
-        android:layout_marginBottom="160dp"
+        android:layout_marginBottom="232dp"
         android:background="@color/colorAccent" />
 
     <SeekBar
@@ -166,5 +166,18 @@
         android:layout_marginBottom="49dp"
         android:background="@android:color/background_light"
         android:max="360" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="298dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView10"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="88dp"
+        android:layout_marginRight="88dp"
+        android:layout_marginBottom="36dp"
+        android:text="Zmiana punktu rotacji"
+        android:textIsSelectable="false" />
 
 </RelativeLayout>

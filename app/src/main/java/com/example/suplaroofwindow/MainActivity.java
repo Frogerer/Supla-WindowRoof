@@ -3,6 +3,8 @@ package com.example.suplaroofwindow;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -17,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cView = (SuplaWindowRoof) findViewById(R.id.cView);
 
+        cView = (SuplaWindowRoof) findViewById(R.id.cView);
         sBar = (SeekBar) findViewById(R.id.seekBar1);
         sBar2 = (SeekBar) findViewById(R.id.seekBar2);
         sBar3 = (SeekBar) findViewById(R.id.seekBar3);
@@ -31,6 +33,14 @@ public class MainActivity extends AppCompatActivity {
         cView.setBlackColor(Color.BLACK);
         cView.setWhiteColor(Color.WHITE);
         cView.setGreenColor(Color.argb(255,5,170,55));
+
+        CheckBox cBox = (CheckBox) findViewById(R.id.checkBox);
+        cBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+               @Override
+               public void onCheckedChanged(CompoundButton checkBox, boolean isChecked) {
+                    cView.setAxis(isChecked);
+               }
+           });
 
         tempString = sBar.getProgress() + "/" + sBar.getMax();
         tView.setText(tempString);
@@ -66,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         sBar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cView.setPercentY(progress);
+                cView.setFullCircle(progress);
                 tempString = sBar3.getProgress() + "/" + sBar3.getMax();
                 tView3.setText(tempString);
             }
@@ -81,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         sBar4.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cView.setPercentX(progress);
+                cView.setVertical(progress);
                 tempString = sBar4.getProgress() + "/" + sBar4.getMax();
                 tView4.setText(tempString);
             }

@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -19,10 +18,11 @@ public class SuplaWindowRoof extends View {
     private int mBlackColor = 0x000000;
     private int mWhiteColor = 0xFFFFFF;
     private int mGreenColor = 0x05AA37;
-    private float mPercentX, mPercentY, mPointX, mPointY;
-    private RectF oval3 = new RectF();
-    private RectF oval4 = new RectF();
-    private float mPointAfterRotationR1, mPointAfterRotationR2, mPointAfterRotationL1, mPointAfterRotationL2;
+    private float mPercentX, mPercentY;
+    private RectF oval = new RectF();
+    private RectF workSpace = new RectF();
+    private float radAngle;
+    private boolean rotateVersion;
 
     public SuplaWindowRoof(Context context) {
         super(context);
@@ -57,19 +57,197 @@ public class SuplaWindowRoof extends View {
         invalidate();
     }
 
-    //Rotacja Y
-    public void setPercentX(float percent) {
+    //Drawing line
+    private void drawLine(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        canvas.drawLine(workSpace.width() * startX + workSpace.left,
+                        workSpace.height() * startY,
+                        workSpace.width() * stopX + workSpace.left,
+                        workSpace.height() * stopY,
+                        paint);
+    }
+
+    //Drawing moving line
+    private void drawMovingLine(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        canvas.drawLine(startX + workSpace.left, startY,stopX + workSpace.left, stopY, paint);
+    }
+
+    //Drawing inner window frame
+    private void drawFrame(Canvas canvas, float startX, float startY, float stopX, float stopY, float shift, Paint paint) {
+        float radius, mPointX1, mPointY1, mPointX2, mPointY2;
+
+        if (stopY >= startY) {
+            radius = stopY - startY + shift;
+        } else {
+            radius = startY - stopY + shift;
+        }
+
+        mPointX1 = workSpace.height() * radius * (float) Math.cos(radAngle);
+        mPointY1 = workSpace.height() * radius * (float) Math.sin(radAngle);
+        mPointX2 = workSpace.height() * shift * (float) Math.cos(radAngle);
+        mPointY2 = workSpace.height() * shift * (float) Math.sin(radAngle);
+
+        drawMovingLine(canvas,
+                workSpace.width() * startX + (mPointX2 * (mPercentX)),
+                workSpace.height() * (startY - shift) - mPointY2,
+                workSpace.width() * startX + (mPointX1 * (mPercentX)),
+                workSpace.height() * (stopY - radius) - mPointY1,
+                paint);
+
+        drawMovingLine(canvas,
+                workSpace.width() * stopX + (mPointX2 * (mPercentX)),
+                workSpace.height() * (startY - shift) - mPointY2,
+                workSpace.width() * stopX + (mPointX1 * (mPercentX)),
+                workSpace.height() * (stopY - radius) - mPointY1,
+                paint);
+
+        drawMovingLine(canvas,
+                workSpace.width() * startX + (mPointX1 * (mPercentX)),
+                workSpace.height() * (stopY - radius) - mPointY1,
+                workSpace.width() * stopX + (mPointX1 * (mPercentX)),
+                workSpace.height() * (stopY - radius) - mPointY1,
+                paint);
+
+        drawMovingLine(canvas,
+                workSpace.width() * startX + (mPointX2 * (mPercentX)),
+                workSpace.height() * (startY - shift) - mPointY2,
+                workSpace.width() * stopX + (mPointX2 * (mPercentX)),
+                workSpace.height() * (startY - shift) - mPointY2,
+                paint);
+    }
+
+    //Drawing outer window frame
+    private void drawFrame(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        float radius, mPointX, mPointY;
+
+        if (rotateVersion) {
+            if (stopY >= startY) {
+                radius = (stopY - startY)/2;
+            } else {
+                radius = (startY - stopY)/2;
+            }
+
+            mPointX = workSpace.height() * radius * (float) Math.cos(radAngle);
+            mPointY = workSpace.height() * radius * (float) Math.sin(radAngle);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * startX - (mPointX * (mPercentX)),
+                    workSpace.height() * (startY + radius) + mPointY,
+                    workSpace.width() * startX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    paint);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * stopX - (mPointX * (mPercentX)),
+                    workSpace.height() * (startY + radius) + mPointY,
+                    workSpace.width() * stopX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    paint);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * startX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    workSpace.width() * stopX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    paint);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * startX - (mPointX * (mPercentX)),
+                    workSpace.height() * (startY + radius) + mPointY,
+                    workSpace.width() * stopX - (mPointX * (mPercentX)),
+                    workSpace.height() * (startY + radius) + mPointY,
+                    paint);
+
+            /*
+            //ovals
+            oval.set(workSpace.width() * startX - workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * startY,
+                    workSpace.width() * startX + workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * stopY);
+            canvas.drawOval(oval,greenPaint);
+
+            //ovals
+            oval.set(workSpace.width() * stopX - workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * startY,
+                    workSpace.width() * stopX + workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * stopY);
+            canvas.drawOval(oval,greenPaint);
+             */
+
+        } else {
+            if (stopY >= startY) {
+                radius = stopY - startY;
+            } else {
+                radius = startY - stopY;
+            }
+
+            mPointX = workSpace.height() * radius * (float) Math.cos(radAngle);
+            mPointY = workSpace.height() * radius * (float) Math.sin(radAngle);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * startX,
+                    workSpace.height() * startY,
+                    workSpace.width() * startX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    paint);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * stopX,
+                    workSpace.height() * startY,
+                    workSpace.width() * stopX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    paint);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * startX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    workSpace.width() * stopX + (mPointX * (mPercentX)),
+                    workSpace.height() * (stopY - radius) - mPointY,
+                    paint);
+
+            drawMovingLine(canvas,
+                    workSpace.width() * startX,
+                    workSpace.height() * startY,
+                    workSpace.width() * stopX,
+                    workSpace.height() * startY,
+                    paint);
+
+            /*
+            //ovals
+            oval.set(workSpace.width() * startX - workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * (startY - radius),
+                    workSpace.width() * startX + workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * stopY);
+            canvas.drawOval(oval,greenPaint);
+
+            //ovals
+            oval.set(workSpace.width() * stopX - workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * (startY - radius),
+                    workSpace.width() * stopX + workSpace.height() * (radius * mPercentX) + workSpace.left,
+                    workSpace.height() * stopY);
+            canvas.drawOval(oval,greenPaint);
+             */
+
+        }
+    }
+
+    //Changing rotation axis point
+    public void setAxis (boolean check) {
+        rotateVersion = check;
+    }
+
+    //Changing opening percent
+    public void setPoint(float percent) {
         if (percent < 0) {
             percent = 0;
-        } else if (percent > 100) {
-            percent = 100;
+        } else if (percent > 360) {
+            percent = 360;
         }
-        mPercentX = percent;
+        radAngle = (float) (percent * Math.PI / 180);
         invalidate();
     }
 
-    //Rotacja 360
-    public void setPercentY(float percent) {
+    //Changing 360 rotation
+    public void setFullCircle(float percent) {
         if (percent < 0) {
             percent = 0;
         } else if (percent > 360) {
@@ -79,17 +257,14 @@ public class SuplaWindowRoof extends View {
         invalidate();
     }
 
-    //Punkt 360
-    public void setPoint(float percent) {
-        float angle;
+    //Changing vertical rotation
+    public void setVertical(float percent) {
         if (percent < 0) {
             percent = 0;
-        } else if (percent > 360) {
-            percent = 360;
+        } else if (percent > 100) {
+            percent = 100;
         }
-        angle = (float) (percent * Math.PI / 180);
-        mPointY = (100) * 5.18f * (float) Math.cos(angle);
-        mPointX = (100 - mPercentX) * 5.18f * (float) Math.sin(angle);
+        mPercentX = percent / 100;
         invalidate();
     }
 
@@ -104,18 +279,20 @@ public class SuplaWindowRoof extends View {
         return false;
     }
 
+    private void calculateConstants() {
+        workSpace = new RectF(0 + (getWidth()/2 * mPercentX),0, getWidth() - (getWidth()/2 * mPercentX), getHeight());
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
 
+        calculateConstants();
+        canvas.drawRect(workSpace, greenPaint);
+
         //Variables
+        float FrameLineWidth = 5f;
         float mWidth = getWidth();
         float mHeight = getHeight();
-        float cPW = mWidth * 0.5f;
-        float cPH = mHeight * 0.5f;
-        Log.i("TAG","mWidth: " + mWidth);
-        Log.i("TAG","mHeight: " + mHeight);
-        float radiusBC = mWidth * 0.48f;
-        float radiusSC = mWidth * 0.27f;
 
         //Black
         blackPaint.setColor(mBlackColor);
@@ -124,12 +301,12 @@ public class SuplaWindowRoof extends View {
 
         //White
         whitePaint.setColor(mWhiteColor);
-        whitePaint.setStrokeWidth(5);
+        whitePaint.setStrokeWidth(FrameLineWidth);
         whitePaint.setStyle(Paint.Style.STROKE);
 
         //Green
         greenPaint.setColor(mGreenColor);
-        greenPaint.setStrokeWidth(5);
+        greenPaint.setStrokeWidth(FrameLineWidth);
         greenPaint.setStyle(Paint.Style.STROKE);
 
         //Grid
@@ -150,186 +327,24 @@ public class SuplaWindowRoof extends View {
         }
 
         canvas.save();
-        canvas.rotate(mPercentY, cPW, cPH);
+        canvas.rotate(mPercentY, mWidth * 0.5f, mHeight * 0.5f);
 
+        //Big frame
+        drawLine(canvas, 0.2f, 0.1f, 0.2f, 0.9f, whitePaint);
+        drawLine(canvas, 0.8f, 0.1f, 0.8f, 0.9f, whitePaint);
+        drawLine(canvas, 0.2f, 0.1f, 0.8f, 0.1f, whitePaint);
+        drawLine(canvas, 0.2f, 0.9f, 0.8f, 0.9f, whitePaint);
 
+        //Moving outer frame
+        drawFrame(canvas, 0.3f, 0.2f, 0.7f, 0.8f, greenPaint);
 
+        //Moving inner frame
+        if (rotateVersion) {
+            drawFrame(canvas,0.35f, 0.25f, 0.65f, 0.75f, greenPaint);
+        } else {
+            drawFrame(canvas,0.35f, 0.25f, 0.65f, 0.75f, 0.05f, greenPaint);
+        }
 
-
-/*
-        oval4.set((int) (cPW - radiusSC + (mPercentX * (radiusSC/100)-1)), (int) (cPH - radiusSC), (int) (cPW + radiusSC - (mPercentX * (radiusSC/100)-1)), (int) (cPH + radiusSC));
-        canvas.drawOval(oval4, greenPaint);
-*/
         canvas.restore();
-
-
-        // (1080 * 0,5) - (1080 * 0,3) + (100 * 3.25) = 540 - 324 + 325
-        // 540 - 291,6 + 292,5
-
-        //Point circle
-        canvas.save();
-        canvas.rotate(mPercentY, mWidth * 0.4f, cPH);
-        oval3.set((int) (mWidth * 0.4f - radiusBC + (mPercentX * (radiusBC/100)-1)), (int) (cPH - radiusBC), (int) (mWidth * 0.4f + radiusBC - (mPercentX * (radiusBC/100)-1)), (int) (cPH + radiusBC));
-        canvas.drawOval(oval3, greenPaint);
-        canvas.drawCircle(mWidth * 0.4f + mPointX,cPH + mPointY,20,whitePaint);
-        canvas.restore();
-
-        canvas.save();
-        canvas.rotate(mPercentY, mWidth * 0.6f, cPH);
-        oval4.set((int) (mWidth * 0.6f - radiusBC + (mPercentX * (radiusBC/100)-1)), (int) (cPH - radiusBC), (int) (mWidth * 0.6f + radiusBC - (mPercentX * (radiusBC/100)-1)), (int) (cPH + radiusBC));
-        canvas.drawOval(oval4, greenPaint);
-        canvas.drawCircle(mWidth * 0.6f + mPointX,cPH + mPointY,20,whitePaint);
-        canvas.restore();
-
-        //lewe
-        canvas.save();
-        canvas.rotate(mPercentY, mWidth * 0.4f, cPH);
-        canvas.drawLine(
-                (int) (mWidth * 0.4f),
-                (int) (mHeight * 0.5f),
-                (int) (mWidth * 0.4f + mPointX),
-                (int) (cPH + mPointY),
-                whitePaint);
-        mPointAfterRotationL1 = (mWidth * 0.4f + mPointX);
-        mPointAfterRotationL2 = (cPH + mPointY);
-        Log.i("TAG", "Punkt L1 " + mPointAfterRotationL1);
-        Log.i("TAG", "Punkt L2 " + mPointAfterRotationL2);
-        canvas.restore();
-
-        //prawe
-        canvas.save();
-        canvas.rotate(mPercentY, mWidth * 0.6f, cPH);
-        canvas.drawLine(
-                (int) (mWidth * 0.6f),
-                (int) (mHeight * 0.5f),
-                (int) (mWidth * 0.6f + mPointX),
-                (int) (cPH + mPointY),
-                whitePaint);
-        mPointAfterRotationR1 = (mWidth * 0.6f + mPointX);
-        mPointAfterRotationR2 = (cPH + mPointY);
-        canvas.restore();
-
-        //belka
-        canvas.save();
-        canvas.rotate(mPercentY, mWidth * 0.5f, cPH);
-        canvas.drawLine(
-                (int) (mWidth * 0.4f + mPointX),
-                (int) (cPH + mPointY),
-                (int) (mWidth * 0.6f + mPointX),
-                (int) (cPH + mPointY),
-                whitePaint);
-        //canvas.restore();
-
-//L
-
-//R
-
-//T
-        canvas.drawLine(
-                (int) (mWidth * 0.4f),
-                (int) (mHeight * 0.5f),
-                (int) (mWidth * 0.6f),
-                (int) (mHeight * 0.5f),
-                whitePaint);
-//D
-
-
-
-
-        //Win Frame
-// L
-        canvas.drawLine(
-                (int) (mWidth * 0.38f),
-                (int) (mHeight * 0.48f),
-                (int) (mWidth * 0.43f),
-                (int) (mHeight * 0.92f),
-                whitePaint);
-//R
-        canvas.drawLine(
-                (int) (mWidth * 0.62f),
-                (int) (mHeight * 0.48f),
-                (int) (mWidth * 0.67f),
-                (int) (mHeight * 0.92f),
-                whitePaint);
-//T
-        canvas.drawLine(
-                (int) (mWidth * 0.38f),
-                (int) (mHeight * 0.48f),
-                (int) (mWidth * 0.62f),
-                (int) (mHeight * 0.48f),
-                whitePaint);
-//R
-        canvas.drawLine(
-                (int) (mWidth * 0.43f),
-                (int) (mHeight * 0.92f),
-                (int) (mWidth * 0.67f),
-                (int) (mHeight * 0.92f),
-                whitePaint);
-
-        /*
-        //Window Line Left
-        canvas.drawLine(
-                (int) (mWidth * 0.3f),
-                (int) (mHeight * 0.3f),
-                (int) (mWidth * 0.4f),
-                (int) (mHeight * 0.7f),
-                whitePaint);
-
-        //Window Line Right
-        canvas.drawLine(
-                (int) (mWidth * 0.5f),
-                (int) (mHeight * 0.3f),
-                (int) (mWidth * 0.6f),
-                (int) (mHeight * 0.7f),
-                whitePaint);
-
-        //Window Line Top
-        canvas.drawLine(
-                (int) (mWidth * 0.3f),
-                (int) (mHeight * 0.3f),
-                (int) (mWidth * 0.5f),
-                (int) (mHeight * 0.3f),
-                whitePaint);
-
-        //Window Line Down
-        canvas.drawLine(
-                (int) (mWidth * 0.4f),
-                (int) (mHeight * 0.7f),
-                (int) (mWidth * 0.6f),
-                (int) (mHeight * 0.7f),
-                whitePaint);
-
-        //Window Line Small Left
-        canvas.drawLine(
-                (int) (mWidth * 0.32f),
-                (int) (mHeight * 0.32f),
-                (int) (mWidth * 0.41f),
-                (int) (mHeight * 0.68f),
-                whitePaint);
-
-        //Window Line Small Right
-        canvas.drawLine(
-                (int) (mWidth * 0.49f),
-                (int) (mHeight * 0.32f),
-                (int) (mWidth * 0.58f),
-                (int) (mHeight * 0.68f),
-                whitePaint);
-
-        //Window Line Small Top
-        canvas.drawLine(
-                (int) (mWidth * 0.32f),
-                (int) (mHeight * 0.32f),
-                (int) (mWidth * 0.49f),
-                (int) (mHeight * 0.32f),
-                whitePaint);
-
-        //Window Line Small Top
-        canvas.drawLine(
-                (int) (mWidth * 0.41f),
-                (int) (mHeight * 0.68f),
-                (int) (mWidth * 0.58f),
-                (int) (mHeight * 0.68f),
-                whitePaint);
-        */
     }
 }

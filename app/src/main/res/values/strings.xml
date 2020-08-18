@@ -13,4 +13,5 @@
     <string name="rotacja_X">rotacja X</string>
     <string name="punkt_360">punkt 360</string>
     <string name="rotacja_360">Rotacja 360</string>
+    <string name="procent">Procent</string>
 </resources>
